@@ -5,9 +5,130 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #eee !important;
+}
+
+header {
+  background-color: white
+}
+
+.card {
+  border-radius: 1rem !important;
+  min-width: 18rem !important;
+}
+
+.card-tl {
+  border-radius: 1rem 0 0 1rem;
+  background-color: mediumseagreen;
+  width: 7rem;
+  height: 11.3rem;
+  font-size: 36px;
+  padding-top: 5rem;
+  text-align: center;
+  color: white;
+  margin-right: 1rem;
+}
+
+.card-ap {
+  border-radius: 0 1rem 1rem 0;
+  background-color: orange;
+  width: 7rem;
+  height: 5rem;
+  font-size: 36px;
+  padding-top: 1rem;
+  text-align: center;
+  color: white;
+}
+
+p,
+h1,
+h2,
+h5 {
+  color: #444;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.ekipfy-login {
+  width: 250px;
+  height: 100px;
+  background-position: center;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  border: 0;
+}
+
+.ekipfy-brand {
+  width: 125px;
+  height: 50px;
+  background-position: center;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  border: 0;
+}
+
+.logout {
+  font-size: 64px;
+  margin: 1rem 1rem 0.4rem 1rem;
+  cursor: pointer;
+  color: #444;
+}
+
+.nav-item {
+  cursor: pointer;
+  padding-bottom: 1rem;
+  margin-left: 1rem;
+  border-bottom: 5px solid transparent;
+  transition: border-color .4s ease;
+}
+
+.custom-card-options {
+  display: inline-block !important;
+}
+
+.nav-item:hover {
+  border-bottom: 5px solid dodgerblue;
+}
+
+.nav-item-selected {
+  border-bottom: 5px solid mediumseagreen;
+}
+
+.side-menu-item {
+  border-left: 5px solid gray !important;
+  cursor: pointer;
+}
+
+.side-menu-item:hover {
+  border-left: 5px solid dodgerblue !important;
+}
+
+.center-vertical {
+  margin-top: 12.5rem;
+}
+
+.input-lg {
+  min-height: 3rem;
+}
+
+/** border */
+.br-danger {
+  border-left: 0.5rem solid tomato
+}
+
+.br-success {
+  border-left: 0.5rem solid mediumseagreen
+}
+
+.br-warning {
+  border-left: 0.5rem solid orange
+}
+
+.br-info {
+  border-left: 0.5rem solid dodgerblue
+}
+
+/* ** */
