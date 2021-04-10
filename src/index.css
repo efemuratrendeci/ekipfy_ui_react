@@ -12,12 +12,17 @@ header {
   background-color: white
 }
 
-.card {
-  border-radius: 1rem !important;
-  min-width: 18rem !important;
+.navbar {
+  min-width: 100%;
+  padding: 1.5rem 4rem;
 }
 
-.card-tl {
+/* .card {
+  border-radius: 1rem !important;
+  min-width: 18rem !important;
+} */
+
+/* .card-tl {
   border-radius: 1rem 0 0 1rem;
   background-color: mediumseagreen;
   width: 7rem;
@@ -27,9 +32,9 @@ header {
   text-align: center;
   color: white;
   margin-right: 1rem;
-}
+} */
 
-.card-ap {
+/* .card-ap {
   border-radius: 0 1rem 1rem 0;
   background-color: orange;
   width: 7rem;
@@ -38,6 +43,10 @@ header {
   padding-top: 1rem;
   text-align: center;
   color: white;
+} */
+
+.c-r {
+  color: red !important;
 }
 
 p,
