@@ -17,6 +17,11 @@ header {
   padding: 1.5rem 4rem;
 }
 
+.d-flex {
+  display: flex;
+  justify-content: space-between;
+}
+
 /* .card {
   border-radius: 1rem !important;
   min-width: 18rem !important;

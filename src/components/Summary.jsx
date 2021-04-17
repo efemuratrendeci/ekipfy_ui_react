@@ -34,7 +34,7 @@ const useStyles = makeStyles({
 const Summary = () => {
   const classes = useStyles();
   const [summary, setSummary] = useState({
-    title: "",
+    period: 0,
     giro: 0,
     closed: 0,
     canceled: 0,
@@ -45,15 +45,23 @@ const Summary = () => {
       let token = localStorage.getItem("token");
 
       const options = {
-          method: "GET",
-          timeout: 1000,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        method: "GET",
+        timeout: 1000,
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        url = "http://localhost:8080/manager/get_summary";
+      },
+        url = "http://localhost:8080/manager/summary";
 
       let response = await fetch(url, options);
+
+      if (response.status === 200) {
+        response = await response.json();
+
+        setSummary({
+          ...response.content.summary,
+        })
+      }
     };
     fetchdata();
   }, []);
@@ -61,28 +69,27 @@ const Summary = () => {
   return (
     <div className={classes.root}>
       <Typography
-        variant="h6"
-        component="h6"
+        variant="subtitle1"
         color="textSecondary"
         gutterBottom
       >
-        2. Dönem
+        {summary.period || 0}. Dönem
       </Typography>
       <Box mt={2} className={classes.item}>
         <Card className={classes.giro}>
           <CardContent>
             <Typography
-              variant="p"
-              component="p"
+              variant="h6"
+              component="h6"
               color="textSecondary"
               gutterBottom
               className={classes.content}
             >
-              615K
+              {summary.giro || 0}
             </Typography>
             <Typography
-              variant="p"
-              component="p"
+              variant="h6"
+              component="h6"
               color="textSecondary"
               gutterBottom
               className={classes.description}
@@ -96,17 +103,17 @@ const Summary = () => {
         <Card className={classes.closed}>
           <CardContent>
             <Typography
-              variant="p"
-              component="p"
+              variant="h6"
+              component="h6"
               color="textSecondary"
               gutterBottom
               className={classes.content}
             >
-              35
+              {summary.closed || 0}
             </Typography>
             <Typography
-              variant="p"
-              component="p"
+              variant="h6"
+              component="h6"
               color="textSecondary"
               gutterBottom
               className={classes.description}
@@ -120,13 +127,13 @@ const Summary = () => {
         <Card className={classes.canceled}>
           <CardContent>
             <Typography
-              variant="p"
-              component="p"
+              variant="h6"
+              component="h6"
               color="textSecondary"
               gutterBottom
               className={classes.content}
             >
-              2
+              {summary.canceled || 0}
             </Typography>
             <Typography
               variant="h6"

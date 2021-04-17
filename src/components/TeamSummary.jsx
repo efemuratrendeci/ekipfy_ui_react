@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import Chip from "@material-ui/core/Chip";
 import Avatar from "@material-ui/core/Avatar";
 import { makeStyles } from "@material-ui/core/styles";
@@ -10,58 +10,60 @@ const useStyles = makeStyles({
   },
   chips: {
     margin: 2,
+    fontSize: 18
   },
 });
 
 const TeamSummary = () => {
   const classes = useStyles();
+  const [summaryTeam, setSummaryTeam] = useState([]);
+
+  useEffect(() => {
+    const fetchdata = async () => {
+      let token = localStorage.getItem("token");
+
+      const options = {
+        method: "GET",
+        timeout: 1000,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+        url = "http://localhost:8080/manager/team_summary";
+
+      let response = await fetch(url, options);
+
+      if (response.status === 200) {
+        response = await response.json();
+
+        setSummaryTeam([
+          ...response.content.team,
+        ])
+      }
+    };
+    fetchdata();
+  }, []);
 
   return (
     <div className={classes.root}>
       <Typography
-        variant="h6"
-        component="h6"
+        variant="subtitle1"
         color="textSecondary"
         gutterBottom
       >
-        Ekip
+        Ekip Durumu
       </Typography>
-      <Chip
-        className={classes.chips}
-        avatar={<Avatar>EMR</Avatar>}
-        label="25"
-        variant="outlined"
-      />
-      <Chip
-        className={classes.chips}
-        avatar={<Avatar>SC</Avatar>}
-        label="21"
-        variant="outlined"
-      />
-      <Chip
-        className={classes.chips}
-        avatar={<Avatar>GC</Avatar>}
-        label="15"
-        variant="outlined"
-      />
-      <Chip
-        className={classes.chips}
-        avatar={<Avatar>SF</Avatar>}
-        label="32"
-        variant="outlined"
-      />
-      <Chip
-        className={classes.chips}
-        avatar={<Avatar>BK</Avatar>}
-        label="7"
-        variant="outlined"
-      />
-      <Chip
-        className={classes.chips}
-        avatar={<Avatar>YÖ</Avatar>}
-        label="2"
-        variant="outlined"
-      />
+      {summaryTeam.map((team) => (
+        <Chip
+          key={team._id}
+          className={classes.chips}
+          avatar={<Avatar>{team.suffix}</Avatar>}
+          label={team.count}
+          color="primary"
+          variant="outlined"
+        />
+      ))}
+
     </div>
   );
 };
