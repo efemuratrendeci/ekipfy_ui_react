@@ -14,13 +14,16 @@ const EVENT_COUNT = 5;
 
 const useStyles = makeStyles({
     root: {
-        margin: 20
+        marginTop: 20,
     },
     item: {
         textAlign: "center",
     },
     paper: {
         padding: '6px 16px',
+        backgroundColor: 'dodgerblue',
+        textAlign: 'center',
+        color: 'white'
     }
 });
 
@@ -62,27 +65,28 @@ const EventTimeLine = () => {
             >
                 Olaylar
             </Typography>
-            <Timeline align="alternate" >
-                {events.map((event, index) => (
-                    <TimelineItem key={index}>
-                        <TimelineOppositeContent>
-                            <Typography variant="body2" color="textSecondary">
-                                {new Date(event.created_date).toLocaleDateString()} {new Date(event.created_date).toLocaleTimeString()}
-                            </Typography>
-                        </TimelineOppositeContent>
-                        <TimelineSeparator>
-                            <TimelineDot variant="outlined" color="primary" />
-                            {index + 1 === events.length ? '' : <TimelineConnector />}
-                        </TimelineSeparator>
-                        <TimelineContent>
-                            <Paper elevation={3} className={classes.paper}>
-                                {event.description}
-                            </Paper>
-                        </TimelineContent>
-                    </TimelineItem>
-                ))}
-            </Timeline>
-
+            <Paper>
+                <Timeline align="alternate" >
+                    {events.map((event, index) => (
+                        <TimelineItem key={index}>
+                            <TimelineOppositeContent>
+                                <Typography variant="body2" color="textSecondary">
+                                    {new Date(event.created_date).toLocaleDateString()} {new Date(event.created_date).toLocaleTimeString()}
+                                </Typography>
+                            </TimelineOppositeContent>
+                            <TimelineSeparator>
+                                <TimelineDot variant="outlined" color="primary" />
+                                {index + 1 === events.length ? '' : <TimelineConnector />}
+                            </TimelineSeparator>
+                            <TimelineContent>
+                                <Paper className={classes.paper}>
+                                    {event.description}
+                                </Paper>
+                            </TimelineContent>
+                        </TimelineItem>
+                    ))}
+                </Timeline>
+            </Paper>
         </div>
 
     );

@@ -1,13 +1,15 @@
 import Main from "./components/Main.jsx";
 import Login from "./components/Login.jsx";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 const App = () => {
   const [user, setUser] = useState({});
   const [error, setError] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isJWTVerified, setIsJWTVerified] = useState(false);
+  const [prefersDarkMode, setPrefersDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
 
   const verifyJWT = async () => {
     let token = localStorage.getItem("token");
@@ -69,10 +71,32 @@ const App = () => {
     }
   };
 
+  const setTheme = (pref) => {
+    if (pref !== undefined && pref !== prefersDarkMode)
+      setPrefersDarkMode(p => !p);
+
+
+    localStorage.setItem('darkMode', !prefersDarkMode);
+
+    return createMuiTheme({
+      palette: {
+        type: prefersDarkMode ? 'light' : 'dark',
+      },
+    })
+  };
+
+  const theme = useMemo(
+    setTheme,
+    [prefersDarkMode],
+  );
+
   return (
     <>
-      <CssBaseline />
-      {isLoggedIn && isJWTVerified ? <Main user={user} /> : !isLoggedIn && isJWTVerified ? <Login method={_login} error={error} /> : 'Loading...'}
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {isLoggedIn && isJWTVerified ? <Main user={user} theme={setTheme} themePref={prefersDarkMode} /> : !isLoggedIn && isJWTVerified ? <Login method={_login} error={error} /> : 'Loading...'}
+      </ThemeProvider>
+
     </>
   );
 };

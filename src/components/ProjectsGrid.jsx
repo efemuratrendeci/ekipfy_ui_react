@@ -1,18 +1,17 @@
 import { useState, useEffect } from "react";
+import {
+    DataGrid,
+    GridToolbarContainer,
+    GridColumnsToolbarButton,
+    GridFilterToolbarButton,
+    GridToolbarExport
+} from "@material-ui/data-grid";
+import Typography from "@material-ui/core/Typography";
+import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
-import { DataGrid, GridRowsProp, GridColDef } from "@material-ui/data-grid";
-
-const useStyles = makeStyles({
-    root: {
-        margin: 20,
-    },
-    item: {
-        textAlign: "center",
-    },
-});
 
 const columns = [
-    { field: "title", headerName: "Başlık", width: 130 },
+    { field: "title", headerName: "Başlık", width: 200 },
     { field: "customer_name", headerName: "Müşteri", width: 130 },
     { field: "category_name", headerName: "Kategori", width: 130 },
     {
@@ -21,13 +20,36 @@ const columns = [
         type: "date",
         width: 130,
     },
+    { field: "members", headerName: "Sorumlular", width: 130 },
+    {
+        field: "status_date",
+        headerName: "SD Tarihi",
+        type: "date",
+        width: 130,
+    },
+    { field: "status", headerName: "Son Durum", width: 800 }
+
 ];
+
+const useStyles = makeStyles({
+    root: {
+        marginTop: 20
+    }
+});
+
+const CustomToolbar = () => {
+    return (
+        <GridToolbarContainer>
+            <GridColumnsToolbarButton />
+            <GridFilterToolbarButton />
+            <GridToolbarExport />
+        </GridToolbarContainer>
+    );
+}
 
 const ProjectsGrid = () => {
     const classes = useStyles();
-    const [projects, setProject] = useState([]);
     const [rows, setRows] = useState([]);
-    const [isProjectsFilled, setIsProjectsFilled] = useState(false);
 
     const getProjects = async () => {
         let token = localStorage.getItem("token");
@@ -46,25 +68,53 @@ const ProjectsGrid = () => {
         if (response.status === 200) {
             response = await response.json();
 
-            setProject(response.content.projects);
-
-            console.log(response.content.projects);
-            console.log(projects)
+            return response.content.projects;
         }
     };
 
     useEffect(() => {
-        getProjects();
+        getProjects()
+            .then(projects => {
+                const _rows = [];
 
-        projects.map((project) => {
-            setRows([...rows, { id: project._id, title: project.title, customer_name: project.customer.name, category_name: project.category.name, deathline_actual: project.deathline_actual }])
-        });
+                projects.forEach((project) => {
+                    _rows.push({
+                        id: project._id,
+                        title: project.title,
+                        customer_name: project.customer.name,
+                        category_name: project.category.name,
+                        deathline_actual: new Date(project.deathline_actual).toLocaleDateString(),
+                        members: project.project_members.map(x => {
+                            return x.username
+                        }).join(','),
+                        status: project.status_history.length === 0 ? 'Not Yok' : project.status_history.slice(-1).pop().status,
+                        status_date: project.status_history.length === 0 ? new Date('1900-01-01') : new Date(project.status_history.slice(-1).pop().status_date).toLocaleDateString()
+                    });
+                });
+
+                setRows(_rows);
+            });
     }, []);
 
     return (
-        <div style={{ height: 500, width: '100%' }}>
-            <DataGrid rows={rows} columns={columns} pageSize={5} checkboxSelection />
+        <div className={classes.root}>
+            <Typography
+                variant="subtitle1"
+                color="textSecondary"
+                gutterBottom
+            >
+                Projeler
+            </Typography>
+            <Paper>
+                <div style={{ height: 500, width: '100%' }}>
+                    <DataGrid rows={rows} columns={columns} pageSize={100} components={{
+                        Toolbar: CustomToolbar
+                    }} />
+                </div>
+            </Paper>
+
         </div>
+
     );
 };
 
