@@ -7,8 +7,9 @@ import EventTimeLine from "./EventTimeLine";
 import ProjectsGrid from "./ProjectsGrid";
 import CategorySummary from "./CategorySummary";
 import CustomerSummary from "./CustomerSummary";
+import Chat from "./Chat";
 
-const Body = () => {
+const Body = ({ socket, user }) => {
   return (
     <>
       <Grid container direction="row">
@@ -23,14 +24,12 @@ const Body = () => {
           <Container maxWidth="lg">
             <ProjectsGrid />
             <br />
-            <Grid container direction="row" justify="space-between" >
-
-            </Grid>
+            <Chat user={user} />
           </Container>
         </Grid>
         <Grid item xs={12} sm={4}>
           <Container maxWidth="sm">
-            <EventTimeLine />
+            <EventTimeLine socket={socket} />
             <CategorySummary />
             <br />
             <CustomerSummary />

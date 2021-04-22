@@ -27,7 +27,7 @@ const useStyles = makeStyles({
     }
 });
 
-const EventTimeLine = () => {
+const EventTimeLine = ({ socket }) => {
     const classes = useStyles();
     const [events, setEvents] = useState([]);
 
@@ -55,6 +55,25 @@ const EventTimeLine = () => {
     useEffect(() => {
         getEvents();
     }, []);
+
+    useEffect(() => {
+        socket.on('events', (event) => {
+            let _events = [...events];
+
+            if (_events.length >= 5) {
+                _events.pop();
+                _events.reverse();
+                _events.push(event);
+                _events.reverse();
+            } else {
+                _events.reverse();
+                _events.push(event);
+                _events.reverse();
+            }
+
+            setEvents(_events);
+        })
+    })
 
     return (
         <div className={classes.root}>

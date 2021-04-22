@@ -10,10 +10,11 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
     root: {
-        margin: 20,
+        marginTop: 20,
     },
     item: {
-        width: '13rem'
+        width: '13rem',
+        margin: 'auto'
     },
     info: {
         backgroundColor: "#001f3f",
@@ -28,6 +29,9 @@ const useStyles = makeStyles({
     },
     price: {
         color: 'mediumseagreen'
+    },
+    bar: {
+        margin: 'auto'
     }
 });
 
@@ -65,7 +69,7 @@ const GiroChart = () => {
     return (
         <Paper>
             <Grid container direction="row">
-                <Box pt={2}>
+                <Box pt={2} className={classes.bar}>
                     <BarChart width={300} height={285} data={customer.projects}>
                         <Tooltip />
                         <XAxis dataKey="title" />

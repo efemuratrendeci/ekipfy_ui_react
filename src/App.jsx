@@ -3,6 +3,9 @@ import Login from "./components/Login.jsx";
 import { useState, useEffect, useMemo } from "react";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:8080');
 
 const App = () => {
   const [user, setUser] = useState({});
@@ -94,7 +97,7 @@ const App = () => {
     <>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {isLoggedIn && isJWTVerified ? <Main user={user} theme={setTheme} themePref={prefersDarkMode} /> : !isLoggedIn && isJWTVerified ? <Login method={_login} error={error} /> : 'Loading...'}
+        {isLoggedIn && isJWTVerified ? <Main user={user} theme={setTheme} themePref={prefersDarkMode} socket={socket} /> : !isLoggedIn && isJWTVerified ? <Login method={_login} error={error} /> : 'Loading...'}
       </ThemeProvider>
 
     </>

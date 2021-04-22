@@ -6,9 +6,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles({
-  root: {
-    marginTop: 20,
-  },
   chips: {
     margin: 2,
     fontSize: 18
@@ -49,7 +46,7 @@ const TeamSummary = () => {
   }, []);
 
   return (
-    <div className={classes.root}>
+    <>
       <Typography
         variant="subtitle1"
         color="textSecondary"
@@ -69,7 +66,7 @@ const TeamSummary = () => {
           />
         ))}
       </Paper>
-    </div>
+    </>
   );
 };
 

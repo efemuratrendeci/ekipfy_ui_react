@@ -11,10 +11,11 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
     root: {
-        margin: 20,
+        marginTop: 20,
     },
     item: {
-        width: '13rem'
+        width: '13rem',
+        margin: 'auto'
     },
     info: {
         backgroundColor: "#001f3f",
@@ -29,6 +30,9 @@ const useStyles = makeStyles({
     },
     price: {
         color: 'mediumseagreen'
+    },
+    pie: {
+        margin: 'auto'
     }
 });
 
@@ -71,7 +75,7 @@ const GiroChart = () => {
     return (
         <Paper>
             <Grid container direction="row">
-                <PieChart width={300} height={300}>
+                <PieChart width={300} height={300} className={classes.pie}>
                     <Tooltip />
                     <Legend />
                     <Pie dataKey="price" data={categories} fill="#8884d8">
