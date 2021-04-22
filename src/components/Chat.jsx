@@ -151,7 +151,7 @@ const Chat = ({ user, socket }) => {
                 <Box p={2}>
                     <Grid container direction="row">
                         <Grid item xs={10}>
-                            <Paper className={classes.messageArea} ref={messageEl}>
+                            <Box className={classes.messageArea} ref={messageEl}>
                                 {chat.map(messageObj => {
                                     return (
                                         <Box key={`${messageObj.from}${messageObj.date}`} className={messageObj.from === user.username ? classes.rightMessageContainer : classes.leftMessageContainer}>
@@ -171,7 +171,7 @@ const Chat = ({ user, socket }) => {
                                         </Box>
                                     )
                                 })}
-                            </Paper>
+                            </Box>
                         </Grid>
                         <Grid item xs={2}>
                             <Box pl={4} mb={3}>
