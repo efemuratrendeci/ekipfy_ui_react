@@ -24,7 +24,7 @@ const Body = ({ socket, user }) => {
           <Container maxWidth="lg">
             <ProjectsGrid />
             <br />
-            <Chat user={user} />
+            <Chat user={user} socket={socket} />
           </Container>
         </Grid>
         <Grid item xs={12} sm={4}>

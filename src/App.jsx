@@ -33,6 +33,8 @@ const App = () => {
 
         setUser({ ...response.content.user });
 
+        socket.emit('login', { username: response.content.user.username });
+
         setIsLoggedIn(true);
       } else {
         setIsLoggedIn(false);
@@ -64,8 +66,11 @@ const App = () => {
 
       if (status === 200) {
         localStorage.setItem("token", response.content.token);
+
         setIsLoggedIn({ isLoggedIn: true });
         setUser({ ...response.content.user });
+
+        socket.emit('login', { username: response.content.user.username });
       } else {
         setError({ message: status !== 500 ? response.message : 'Server responded with 500. Make sure your backend stil on run' });
       }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
@@ -10,43 +10,72 @@ import SendIcon from '@material-ui/icons/Send';
 
 const useStyles = makeStyles((theme) => ({
     leftMessage: {
-        float: "left",
-        display: "block",
         backgroundColor: "dodgerblue",
-        maxWidth: '20rem',
+        margin: theme.spacing(1),
         color: "white",
         padding: theme.spacing(1),
+        float: "left",
+        maxWidth: "15rem",
+        minWidth: "12rem",
     },
     rightMessage: {
-        float: "right",
-        display: "block",
-        maxWidth: '20rem',
+        margin: theme.spacing(1),
         backgroundColor: "mediumseagreen",
         color: "white",
         padding: theme.spacing(1),
+        float: "right",
+        maxWidth: "15rem",
+        minWidth: "12rem",
+    },
+    rightMessageContainer: {
+        display: "flex",
+        justifyContent: "flex-end"
+    },
+    leftMessageContainer: {
+        display: "flex",
+        justifyContent: "flex-start"
     },
     messageArea: {
         width: "100%",
-        minHeight: "30rem",
+        height: "30rem",
+        padding: theme.spacing(2),
+        overflowY: "scroll",
+        position: "relative"
     },
     margin: {
         marginTop: theme.spacing(1),
     },
     button: {
         margin: theme.spacing(2),
+    },
+    fullWidth: {
+        width: "100%"
+    },
+    activeUser: {
+        marginLeft: theme.spacing(2),
+        marginBottom: theme.spacing(1),
+        paddingLeft: theme.spacing(1),
+        color: "mediumseagreen",
+        border: "1px solid mediumseagreen",
+        borderRadius: "20px",
+        textAlign: "center"
     }
 }));
 
-const Chat = ({ user }) => {
+const Chat = ({ user, socket }) => {
     const classes = useStyles();
+    const messageEl = useRef(null);
     const [chat, setChat] = useState([]);
+    const [message, setMessage] = useState({});
+    const [messageValue, setMessageValue] = useState("");
+    const [activeUsers, setActiveUsers] = useState([]);
 
     const getChat = async () => {
         let token = localStorage.getItem("token");
 
         const options = {
             method: "GET",
-            timeout: 1000,
+            timeout: 2000,
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -61,9 +90,57 @@ const Chat = ({ user }) => {
         }
     };
 
+    const sendMessage = async () => {
+        let token = localStorage.getItem("token");
+
+        const options = {
+            method: "POST",
+            timeout: 2000,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                ...message
+            })
+        },
+            url = `http://localhost:8080/common/message`;
+
+        let response = await fetch(url, options);
+
+        setMessage({});
+        setMessageValue("");
+
+        if (response.status !== 201) {
+            throw new Error('Mesaj Gönderilemedi')
+        }
+    }
+
     useEffect(() => {
         getChat();
     }, []);
+
+    useEffect(() => {
+        if (messageEl) {
+            messageEl.current.addEventListener('DOMNodeInserted', event => {
+                const { currentTarget: target } = event;
+                target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
+            });
+        }
+    }, []);
+
+    useEffect(() => {
+        socket.on('active_users', (_user) => {
+            setActiveUsers(_user);
+        });
+
+        socket.on('new_message', (message) => {
+            let _chat = [...chat];
+            _chat.push(message);
+
+            setChat(_chat);
+        });
+    })
 
     return (
         <>
@@ -74,16 +151,41 @@ const Chat = ({ user }) => {
                 <Box p={2}>
                     <Grid container direction="row">
                         <Grid item xs={10}>
-                            <Paper className={classes.messageArea}>
-                                <Box p={2}>
-                                    {chat.map(messageObj => {
-                                        return (
-                                            <Paper key={messageObj._id} className={messageObj.from === user.username ? classes.rightMessage : classes.leftMessage}>
-                                                {messageObj.message}
-                                            </Paper>)
-                                    })}
-                                </Box>
+                            <Paper className={classes.messageArea} ref={messageEl}>
+                                {chat.map(messageObj => {
+                                    return (
+                                        <Box key={`${messageObj.from}${messageObj.date}`} className={messageObj.from === user.username ? classes.rightMessageContainer : classes.leftMessageContainer}>
+                                            <Paper className={messageObj.from === user.username ? classes.rightMessage : classes.leftMessage}>
+                                                <Box display="flex" justifyContent="space-between">
+                                                    <Typography variant="caption" display="block" gutterBottom>
+                                                        {messageObj.from}
+                                                    </Typography>
+                                                    <Typography variant="caption" display="block" gutterBottom>
+                                                        {new Date(messageObj.date).toLocaleDateString()} {new Date(messageObj.date).toLocaleTimeString()}
+                                                    </Typography>
+                                                </Box>
+                                                <Typography variant="subtitle1" display="block" gutterBottom>
+                                                    {messageObj.message}
+                                                </Typography>
+                                            </Paper>
+                                        </Box>
+                                    )
+                                })}
                             </Paper>
+                        </Grid>
+                        <Grid item xs={2}>
+                            <Box pl={4} mb={3}>
+                                <Typography variant="caption" display="block" gutterBottom >
+                                    Aktif Kullanıcılar
+                                </Typography>
+                            </Box>
+
+                            {activeUsers.map(username => {
+                                return (
+                                    <Typography key={`au-${username}`} variant="subtitle1" display="block" gutterBottom className={classes.activeUser}>
+                                        {username}
+                                    </Typography>)
+                            })}
                         </Grid>
                     </Grid>
                     <Box pt={2}>
@@ -101,6 +203,11 @@ const Chat = ({ user }) => {
                                         shrink: true,
                                     }}
                                     variant="outlined"
+                                    onChange={(e) => {
+                                        setMessage({ message: e.target.value, from: user.username, date: new Date() });
+                                        setMessageValue(e.target.value)
+                                    }}
+                                    value={messageValue}
                                 />
                             </Grid>
                             <Grid item xs={2}>
@@ -109,6 +216,7 @@ const Chat = ({ user }) => {
                                     color="primary"
                                     className={classes.button}
                                     endIcon={<SendIcon />}
+                                    onClick={sendMessage}
                                 >
                                     Gönder
                                 </Button>
