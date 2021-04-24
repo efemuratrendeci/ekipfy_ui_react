@@ -4,11 +4,12 @@ import {
     GridToolbarContainer,
     GridColumnsToolbarButton,
     GridFilterToolbarButton,
-    GridToolbarExport
+    GridToolbarExport,
 } from "@material-ui/data-grid";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
+import ProjectModal from "./ProjectModal"
 
 const columns = [
     { field: "title", headerName: "Başlık", width: 200 },
@@ -27,14 +28,13 @@ const columns = [
         type: "date",
         width: 130,
     },
-    { field: "status", headerName: "Son Durum", width: 800 }
-
+    { field: "status", headerName: "Son Durum", width: 800 },
 ];
 
 const useStyles = makeStyles({
     root: {
-        marginTop: 20
-    }
+        marginTop: 20,
+    },
 });
 
 const CustomToolbar = () => {
@@ -45,11 +45,23 @@ const CustomToolbar = () => {
             <GridToolbarExport />
         </GridToolbarContainer>
     );
-}
+};
 
 const ProjectsGrid = () => {
     const classes = useStyles();
     const [rows, setRows] = useState([]);
+    const [projects, setProjects] = useState([]);
+    const [project, setProject] = useState({});
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = (id) => {
+        setOpen(true);
+        setProject(projects.filter(x => x._id.toString() === id)[0]);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const getProjects = async () => {
         let token = localStorage.getItem("token");
@@ -73,48 +85,61 @@ const ProjectsGrid = () => {
     };
 
     useEffect(() => {
-        getProjects()
-            .then(projects => {
-                const _rows = [];
+        getProjects().then((projects) => {
+            const _rows = [];
 
-                projects.forEach((project) => {
-                    _rows.push({
-                        id: project._id,
-                        title: project.title,
-                        customer_name: project.customer.name,
-                        category_name: project.category.name,
-                        deathline_actual: new Date(project.deathline_actual).toLocaleDateString(),
-                        members: project.project_members.map(x => {
-                            return x.username
-                        }).join(','),
-                        status: project.status_history.length === 0 ? 'Not Yok' : project.status_history.slice(-1).pop().status,
-                        status_date: project.status_history.length === 0 ? new Date('1900-01-01') : new Date(project.status_history.slice(-1).pop().status_date).toLocaleDateString()
-                    });
+            projects.forEach((project) => {
+                _rows.push({
+                    id: project._id,
+                    title: project.title,
+                    customer_name: project.customer.name,
+                    category_name: project.category.name,
+                    deathline_actual: new Date(
+                        project.deathline_actual
+                    ).toLocaleDateString(),
+                    members: project.project_members
+                        .map((x) => {
+                            return x.username;
+                        })
+                        .join(","),
+                    status:
+                        project.status_history.length === 0
+                            ? "Not Yok"
+                            : project.status_history.slice(-1).pop().status,
+                    status_date:
+                        project.status_history.length === 0
+                            ? new Date("1900-01-01")
+                            : new Date(
+                                project.status_history.slice(-1).pop().status_date
+                            ).toLocaleDateString(),
                 });
-
-                setRows(_rows);
             });
+
+            setRows(_rows);
+            setProjects(projects);
+        });
     }, []);
 
     return (
         <div className={classes.root}>
-            <Typography
-                variant="subtitle1"
-                color="textSecondary"
-                gutterBottom
-            >
+            <Typography variant="subtitle1" color="textSecondary" gutterBottom>
                 Projeler
             </Typography>
             <Paper>
-                <div style={{ height: 500, width: '100%' }}>
-                    <DataGrid rows={rows} columns={columns} pageSize={100} components={{
-                        Toolbar: CustomToolbar
-                    }} />
+                <div style={{ height: 500, width: "100%" }}>
+                    <DataGrid
+                        onRowClick={(e) => handleClickOpen(e.id)}
+                        rows={rows}
+                        columns={columns}
+                        pageSize={100}
+                        components={{
+                            Toolbar: CustomToolbar,
+                        }}
+                    />
                 </div>
             </Paper>
-
+            <ProjectModal handleClose={handleClose} open={open} project={project} />
         </div>
-
     );
 };
 

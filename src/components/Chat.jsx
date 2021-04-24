@@ -8,9 +8,10 @@ import TextField from "@material-ui/core/TextField";
 import Button from '@material-ui/core/Button';
 import SendIcon from '@material-ui/icons/Send';
 
+const COLORS = ['mediumseagreen', '#A52A2A', '#6495ED', '#8B008B', '#2F4F4F', 'pink', 'orange', 'dodgerblue', 'Tomato', 'Tan', 'Teal']
+
 const useStyles = makeStyles((theme) => ({
     leftMessage: {
-        backgroundColor: "dodgerblue",
         margin: theme.spacing(1),
         color: "white",
         padding: theme.spacing(1),
@@ -20,7 +21,6 @@ const useStyles = makeStyles((theme) => ({
     },
     rightMessage: {
         margin: theme.spacing(1),
-        backgroundColor: "mediumseagreen",
         color: "white",
         padding: theme.spacing(1),
         float: "right",
@@ -54,18 +54,20 @@ const useStyles = makeStyles((theme) => ({
     activeUser: {
         marginLeft: theme.spacing(2),
         marginBottom: theme.spacing(1),
-        paddingLeft: theme.spacing(1),
+        padding: theme.spacing(0.25),
         color: "mediumseagreen",
         border: "1px solid mediumseagreen",
         borderRadius: "20px",
-        textAlign: "center"
+        textAlign: "center",
     }
 }));
 
 const Chat = ({ user, socket }) => {
     const classes = useStyles();
     const messageEl = useRef(null);
+    const [chatScroll, setChatScroll] = useState(false);
     const [chat, setChat] = useState([]);
+    const [userColors, setUserColors] = useState(new Map());
     const [message, setMessage] = useState({});
     const [messageValue, setMessageValue] = useState("");
     const [activeUsers, setActiveUsers] = useState([]);
@@ -91,6 +93,7 @@ const Chat = ({ user, socket }) => {
     };
 
     const sendMessage = async () => {
+        setChatScroll(true);
         let token = localStorage.getItem("token");
 
         const options = {
@@ -117,16 +120,17 @@ const Chat = ({ user, socket }) => {
     }
 
     useEffect(() => {
-        getChat();
-    }, []);
-
-    useEffect(() => {
         if (messageEl) {
             messageEl.current.addEventListener('DOMNodeInserted', event => {
                 const { currentTarget: target } = event;
-                target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
+                target.scroll({ top: target.scrollHeight, behavior: chatScroll ? 'auto' : 'smooth' });
             });
         }
+
+    }, [chatScroll]);
+
+    useEffect(() => {
+        getChat();
     }, []);
 
     useEffect(() => {
@@ -140,7 +144,22 @@ const Chat = ({ user, socket }) => {
 
             setChat(_chat);
         });
-    })
+    });
+
+    useEffect(() => {
+
+        chat.forEach(message => {
+            !userColors.get(message.from) && userColors.set(message.from, COLORS[Math.ceil(Math.random() * 10)]);
+        });
+
+        user.username && userColors.set(user.username, COLORS[0]);
+
+        let map = new Map(userColors)
+
+        setUserColors(map);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chat, user.username])
 
     return (
         <>
@@ -155,7 +174,7 @@ const Chat = ({ user, socket }) => {
                                 {chat.map(messageObj => {
                                     return (
                                         <Box key={`${messageObj.from}${messageObj.date}`} className={messageObj.from === user.username ? classes.rightMessageContainer : classes.leftMessageContainer}>
-                                            <Paper className={messageObj.from === user.username ? classes.rightMessage : classes.leftMessage}>
+                                            <Paper style={{ backgroundColor: userColors.get(messageObj.from) }} className={messageObj.from === user.username ? classes.rightMessage : classes.leftMessage}>
                                                 <Box display="flex" justifyContent="space-between">
                                                     <Typography variant="caption" display="block" gutterBottom>
                                                         {messageObj.from}
