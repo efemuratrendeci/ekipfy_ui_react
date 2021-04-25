@@ -51,8 +51,10 @@ const ProjectsGrid = () => {
     const classes = useStyles();
     const [rows, setRows] = useState([]);
     const [projects, setProjects] = useState([]);
+    const [usernames, setUsernames] = useState([]);
     const [project, setProject] = useState({});
     const [open, setOpen] = useState(false);
+    const [reRender, setReRender] = useState(false);
 
     const handleClickOpen = (id) => {
         setOpen(true);
@@ -80,15 +82,19 @@ const ProjectsGrid = () => {
         if (response.status === 200) {
             response = await response.json();
 
-            return response.content.projects;
+            return response.content;
         }
     };
 
+    const reRenderGrid = () => {
+        setReRender(!reRender);
+    }
+
     useEffect(() => {
-        getProjects().then((projects) => {
+        getProjects().then((content) => {
             const _rows = [];
 
-            projects.forEach((project) => {
+            content.projects.forEach((project) => {
                 _rows.push({
                     id: project._id,
                     title: project.title,
@@ -108,7 +114,7 @@ const ProjectsGrid = () => {
                             : project.status_history.slice(-1).pop().status,
                     status_date:
                         project.status_history.length === 0
-                            ? new Date("1900-01-01")
+                            ? new Date("1967-08-02")
                             : new Date(
                                 project.status_history.slice(-1).pop().status_date
                             ).toLocaleDateString(),
@@ -116,9 +122,12 @@ const ProjectsGrid = () => {
             });
 
             setRows(_rows);
-            setProjects(projects);
+            setProjects(content.projects);
+            setUsernames(content.usernames);
+
+            // eslint-disable-next-line react-hooks/exhaustive-deps
         });
-    }, []);
+    }, [reRender]);
 
     return (
         <div className={classes.root}>
@@ -138,7 +147,7 @@ const ProjectsGrid = () => {
                     />
                 </div>
             </Paper>
-            <ProjectModal handleClose={handleClose} open={open} project={project} />
+            <ProjectModal handleClose={handleClose} open={open} project={project} usernames={usernames} reRender={reRenderGrid} />
         </div>
     );
 };

@@ -40,8 +40,8 @@ const Summary = () => {
   const [summary, setSummary] = useState({
     period: 0,
     giro: 0,
-    closed: 0,
-    canceled: 0,
+    done: 0,
+    cancel: 0,
   });
 
   useEffect(() => {
@@ -114,7 +114,7 @@ const Summary = () => {
                 gutterBottom
                 className={classes.content}
               >
-                {summary.closed || 0}
+                {summary.done || 0}
               </Typography>
               <Typography
                 variant="h6"
@@ -138,7 +138,7 @@ const Summary = () => {
                 gutterBottom
                 className={classes.content}
               >
-                {summary.canceled || 0}
+                {summary.cancel || 0}
               </Typography>
               <Typography
                 variant="h6"

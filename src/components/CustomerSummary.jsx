@@ -20,7 +20,7 @@ const useStyles = makeStyles({
         backgroundColor: "#001f3f",
     },
     content: {
-        fontSize: 42,
+        fontSize: 36,
         color: "pink",
     },
     description: {
@@ -38,7 +38,7 @@ const useStyles = makeStyles({
 const GiroChart = () => {
     const classes = useStyles();
     const [customer, setCustomer] = useState({});
-    const [period, setPeriod] = useState('');
+    const [period, setPeriod] = useState(0);
 
     const getCategories = async () => {
         let token = localStorage.getItem("token");
@@ -97,7 +97,7 @@ const GiroChart = () => {
                                 gutterBottom
                                 className={classes.description}
                             >
-                                <strong className={classes.price}>{new Intl.NumberFormat().format(customer.giro)} TL</strong> ile <br />{period}. dönemin en iyi müşterisi
+                                <strong className={classes.price}>{isNaN(customer.giro) ? 0 : new Intl.NumberFormat().format(customer.giro)} TL</strong> ile <br />{period}. dönemin en iyi müşterisi
                             </Typography>
                         </CardContent>
                     </Card>

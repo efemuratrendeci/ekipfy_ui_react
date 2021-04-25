@@ -231,7 +231,6 @@ const Chat = ({ user, socket }) => {
                             </Grid>
                             <Grid item xs={2}>
                                 <Button
-                                    variant="contained"
                                     color="primary"
                                     className={classes.button}
                                     endIcon={<SendIcon />}
