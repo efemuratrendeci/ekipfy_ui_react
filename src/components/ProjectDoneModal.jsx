@@ -30,7 +30,7 @@ const ProjectCloseModal = ({ open, handleClose, reRender, handleCloseProject, pr
             },
             body: JSON.stringify(body)
         },
-            url = `http://localhost:8080/manager/project`;
+            url = `${process.env.REACT_APP_API_URL}/manager/project`;
 
         let response = await fetch(url, options);
 

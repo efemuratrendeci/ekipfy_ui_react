@@ -41,7 +41,7 @@ const EventTimeLine = ({ socket }) => {
                 Authorization: `Bearer ${token}`,
             },
         },
-            url = `http://localhost:8080/manager/events?take=${EVENT_COUNT}`;
+            url = `${process.env.REACT_APP_API_URL}/manager/events?take=${EVENT_COUNT}`;
 
         let response = await fetch(url, options);
 

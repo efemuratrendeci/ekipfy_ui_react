@@ -30,7 +30,7 @@ const TeamSummary = () => {
           Authorization: `Bearer ${token}`,
         },
       },
-        url = "http://localhost:8080/manager/team_summary";
+        url = `${process.env.REACT_APP_API_URL}/manager/team_summary`;
 
       let response = await fetch(url, options);
 

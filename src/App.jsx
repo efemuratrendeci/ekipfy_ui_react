@@ -5,7 +5,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:8080');
+const socket = io(process.env.REACT_APP_API_URL);
 
 const App = () => {
   const [user, setUser] = useState({});
@@ -24,7 +24,7 @@ const App = () => {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
-      }, url = "http://localhost:8080/auth/verify_jwt";
+      }, url = `${process.env.REACT_APP_API_URL}/auth/verify_jwt`;
 
       let response = await fetch(url, options);
 
@@ -52,7 +52,7 @@ const App = () => {
 
   const _login = async (creadentials) => {
     try {
-      let response = await fetch("http://localhost:8080/auth/connect", {
+      let response = await fetch(`${process.env.REACT_APP_API_URL}/auth/connect`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

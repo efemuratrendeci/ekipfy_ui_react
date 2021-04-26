@@ -55,7 +55,7 @@ const Summary = () => {
           Authorization: `Bearer ${token}`,
         },
       },
-        url = "http://localhost:8080/manager/summary";
+        url = `${process.env.REACT_APP_API_URL}/manager/summary`;
 
       let response = await fetch(url, options);
 

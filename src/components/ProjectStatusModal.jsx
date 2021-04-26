@@ -62,7 +62,7 @@ const ProjectSummaryModal = ({ open, handleClose, status, project_id }) => {
                 },
                 body: JSON.stringify(body)
             },
-                url = `http://localhost:8080/common/project`;
+                url = `${process.env.REACT_APP_API_URL}/common/project`;
 
             let response = await fetch(url, options);
 

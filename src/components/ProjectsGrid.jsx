@@ -75,7 +75,7 @@ const ProjectsGrid = () => {
                 Authorization: `Bearer ${token}`,
             },
         },
-            url = `http://localhost:8080/common/projects?is_active=true`;
+            url = `${process.env.REACT_APP_API_URL}/common/projects?is_active=true`;
 
         let response = await fetch(url, options);
 

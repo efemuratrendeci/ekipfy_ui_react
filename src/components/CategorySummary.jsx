@@ -52,7 +52,7 @@ const GiroChart = () => {
                 Authorization: `Bearer ${token}`,
             },
         },
-            url = `http://localhost:8080/manager/category_summary?top=5`;
+            url = `${process.env.REACT_APP_API_URL}/manager/category_summary?top=5`;
 
         let response = await fetch(url, options);
 

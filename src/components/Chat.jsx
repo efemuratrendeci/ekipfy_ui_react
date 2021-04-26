@@ -82,7 +82,7 @@ const Chat = ({ user, socket }) => {
                 Authorization: `Bearer ${token}`,
             },
         },
-            url = `http://localhost:8080/common/messages`;
+            url = `${process.env.REACT_APP_API_URL}/common/messages`;
 
         let response = await fetch(url, options);
 
@@ -107,7 +107,7 @@ const Chat = ({ user, socket }) => {
                 ...message
             })
         },
-            url = `http://localhost:8080/common/message`;
+            url = `${process.env.REACT_APP_API_URL}/common/message`;
 
         let response = await fetch(url, options);
 

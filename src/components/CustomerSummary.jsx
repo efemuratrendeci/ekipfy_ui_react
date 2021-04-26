@@ -50,7 +50,7 @@ const GiroChart = () => {
                 Authorization: `Bearer ${token}`,
             },
         },
-            url = `http://localhost:8080/manager/customer_summary?top=3`;
+            url = `${process.env.REACT_APP_API_URL}/manager/customer_summary?top=3`;
 
         let response = await fetch(url, options);
 
