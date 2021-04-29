@@ -17,13 +17,16 @@ import CommentIcon from '@material-ui/icons/Comment';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import CloseIcon from '@material-ui/icons/Close';
+import SendIcon from '@material-ui/icons/Send';
 import ProjectStatusModal from './ProjectStatusModal';
 import ProjectNoteModal from './ProjectNoteModal';
 import ProjectCancelModal from './ProjectCancelModal';
 import ProjectDoneModal from './ProjectDoneModal';
+import Chip from '@material-ui/core/Chip';
+import InputBase from '@material-ui/core/InputBase';
 import { useState, useEffect } from "react";
 
-const ProjectModal = ({ handleClose, open, project, usernames, reRender }) => {
+const ProjectModal = ({ handleClose, open, project, usernames }) => {
     const [body, setBody] = useState({ ...project });
     const [statusOpen, setStatusOpen] = useState(false);
     const [noteOpen, setNoteOpen] = useState(false);
@@ -66,6 +69,7 @@ const ProjectModal = ({ handleClose, open, project, usernames, reRender }) => {
         setBody({ ...project });
     }, [project]);
 
+
     const handleChange = (e) => {
         const newBody = { ...body };
         e.target.id === 'effort_min' ? newBody[e.target.id] = Number(e.target.value) * 480 : newBody[e.target.id] = e.target.value;
@@ -83,6 +87,10 @@ const ProjectModal = ({ handleClose, open, project, usernames, reRender }) => {
         }
 
         setBody(newBody);
+    }
+
+    const handleDeleteTag = (e) => {
+
     }
 
     if (
@@ -207,17 +215,34 @@ const ProjectModal = ({ handleClose, open, project, usernames, reRender }) => {
                                     }
                                 />
                             </Box>
-                            <Box style={{ width: "100%" }}>
-                                <TextField
-                                    margin="dense"
-                                    id="tags"
-                                    label="Tagler"
-                                    variant="outlined"
-                                    fullWidth
-                                    value={body.tags}
-                                    onChange={handleChange}
-                                />
-                            </Box>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        icon={<CheckBoxOutlineBlankIcon />}
+                                        checkedIcon={
+                                            <CheckCircleIcon style={{ color: "mediumseagreen" }} />
+                                        }
+                                        name="is_pre_project"
+                                        checked={body.is_pre_project}
+                                        onChange={handleChange}
+                                    />
+                                }
+                                label="Proje adayı"
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        icon={<CheckBoxOutlineBlankIcon />}
+                                        checkedIcon={
+                                            <CheckCircleIcon style={{ color: "mediumseagreen" }} />
+                                        }
+                                        name="is_pre_project"
+                                        checked={body.is_internal}
+                                        onChange={handleChange}
+                                    />
+                                }
+                                label="Dahili Proje"
+                            />
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <Paper
@@ -249,38 +274,17 @@ const ProjectModal = ({ handleClose, open, project, usernames, reRender }) => {
                                     />
                                 ))}
                             </Paper>
+                            <br />
+                            {body.tags.map(tag => (
+                                <Chip color="primary" onDelete={() => { }} label={tag} />))}
+                            <Box style={{ width: "100%", display: "flex", justifyContent: "space-between" }}>
+                                <InputBase style={{ height: '3rem', width: '80%' }} placeholder="Tag ekleyin" />
+                                <IconButton color="primary" onClick={handleClose}>
+                                    <SendIcon />
+                                </IconButton>
+                            </Box>
                         </Grid>
                     </Grid>
-                    <br />
-                    <Grid container></Grid>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                icon={<CheckBoxOutlineBlankIcon />}
-                                checkedIcon={
-                                    <CheckCircleIcon style={{ color: "mediumseagreen" }} />
-                                }
-                                name="is_pre_project"
-                                checked={body.is_pre_project}
-                                onChange={handleChange}
-                            />
-                        }
-                        label="Proje adayı"
-                    />
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                icon={<CheckBoxOutlineBlankIcon />}
-                                checkedIcon={
-                                    <CheckCircleIcon style={{ color: "mediumseagreen" }} />
-                                }
-                                name="is_pre_project"
-                                checked={body.is_internal}
-                                onChange={handleChange}
-                            />
-                        }
-                        label="Dahili Proje"
-                    />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClickOpenCancel} color="secondary">
@@ -294,8 +298,8 @@ const ProjectModal = ({ handleClose, open, project, usernames, reRender }) => {
             </Dialog>
             <ProjectStatusModal open={statusOpen} handleClose={handleCloseStatus} status={body.status_history} project_id={project._id} />
             <ProjectNoteModal open={noteOpen} handleClose={handleCloseNote} note={body.project_note} project_id={project._id} />
-            <ProjectCancelModal open={cancelOpen} handleClose={handleCloseCancel} reRender={reRender} handleCloseProject={handleClose} project_id={project._id} />
-            <ProjectDoneModal open={doneOpen} handleClose={handleCloseDone} reRender={reRender} handleCloseProject={handleClose} project_id={project._id} />
+            <ProjectCancelModal open={cancelOpen} handleClose={handleCloseCancel} handleCloseProject={handleClose} project_id={project._id} />
+            <ProjectDoneModal open={doneOpen} handleClose={handleCloseDone} handleCloseProject={handleClose} project_id={project._id} />
         </div>
     );
 };
