@@ -6,7 +6,7 @@ import Switch from '@material-ui/core/Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 
-const Header = ({ user, theme, themePref }) => {
+const Header = ({ user, theme, themePref, verifyJWT }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
@@ -55,7 +55,8 @@ const Header = ({ user, theme, themePref }) => {
                     <NavigationMenu
                         anchorEl={anchorEl}
                         open={open}
-                        handleClose={handleClose} />
+                        handleClose={handleClose}
+                        verifyJWT={verifyJWT} />
                 </div>
 
             </div>

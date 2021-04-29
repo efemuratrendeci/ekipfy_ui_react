@@ -1,5 +1,6 @@
 import Main from "./components/Main.jsx";
 import Login from "./components/Login.jsx";
+import Loading from "./components/Loading.jsx";
 import { useState, useEffect, useMemo } from "react";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -15,9 +16,9 @@ const App = () => {
   const [prefersDarkMode, setPrefersDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
 
   const verifyJWT = async () => {
-    let token = localStorage.getItem("token");
+    try {
+      let token = localStorage.getItem("token");
 
-    if (token) {
       const options = {
         method: "GET",
         timeout: 1000,
@@ -29,21 +30,23 @@ const App = () => {
       let response = await fetch(url, options);
 
       if (response.status === 200) {
+
         response = await response.json();
 
         setUser({ ...response.content.user });
-
         socket.emit('login', { username: response.content.user.username });
-
         setIsLoggedIn(true);
+
       } else {
         setIsLoggedIn(false);
       }
-    } else {
-      setIsLoggedIn(false);
-    }
 
-    setIsJWTVerified(true)
+    } catch (error) {
+      setError(error.message);
+      console.log(error)
+    } finally {
+      setIsJWTVerified(true);
+    }
   }
 
   useEffect(() => {
@@ -102,7 +105,18 @@ const App = () => {
     <>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {isLoggedIn && isJWTVerified ? <Main user={user} theme={setTheme} themePref={prefersDarkMode} socket={socket} /> : !isLoggedIn && isJWTVerified ? <Login method={_login} error={error} /> : 'Loading...'}
+        {isLoggedIn && isJWTVerified ?
+          <Main
+            user={user}
+            theme={setTheme}
+            themePref={prefersDarkMode}
+            socket={socket}
+            verifyJWT={verifyJWT} />
+          : !isLoggedIn && isJWTVerified ?
+            <Login
+              method={_login}
+              error={error} />
+            : <Loading />}
       </ThemeProvider>
 
     </>

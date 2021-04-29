@@ -70,6 +70,7 @@ const ProjectSummaryModal = ({ open, handleClose, status, project_id }) => {
                 let res = await response.json();
 
                 setSuccess('Başarılı');
+                setStatusMessage('');
 
                 return res.content;
             }

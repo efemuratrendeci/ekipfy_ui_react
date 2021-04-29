@@ -22,7 +22,7 @@ const Body = ({ socket, user }) => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <Container maxWidth="lg">
-            <ProjectsGrid />
+            <ProjectsGrid socket={socket} />
             <br />
             <Chat user={user} socket={socket} />
           </Container>

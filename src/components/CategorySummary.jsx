@@ -18,7 +18,7 @@ const useStyles = makeStyles({
         margin: 'auto'
     },
     info: {
-        backgroundColor: "#001f3f",
+        backgroundColor: "navy",
     },
     content: {
         fontSize: 36,

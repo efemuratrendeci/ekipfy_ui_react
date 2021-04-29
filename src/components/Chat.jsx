@@ -55,8 +55,9 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: theme.spacing(2),
         marginBottom: theme.spacing(1),
         padding: theme.spacing(0.25),
-        color: "mediumseagreen",
-        border: "1px solid mediumseagreen",
+        color: "white",
+        backgroundColor: "navy",
+        border: "1px solid navy",
         borderRadius: "20px",
         textAlign: "center",
     }

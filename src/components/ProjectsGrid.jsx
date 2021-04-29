@@ -47,14 +47,13 @@ const CustomToolbar = () => {
     );
 };
 
-const ProjectsGrid = () => {
+const ProjectsGrid = ({ socket }) => {
     const classes = useStyles();
     const [rows, setRows] = useState([]);
     const [projects, setProjects] = useState([]);
     const [usernames, setUsernames] = useState([]);
     const [project, setProject] = useState({});
     const [open, setOpen] = useState(false);
-    const [reRender, setReRender] = useState(false);
 
     const handleClickOpen = (id) => {
         setOpen(true);
@@ -86,9 +85,11 @@ const ProjectsGrid = () => {
         }
     };
 
-    const reRenderGrid = () => {
-        setReRender(!reRender);
-    }
+    useEffect(() => {
+        socket.once('project', (_project) => {
+            setProject({ ..._project });
+        });
+    });
 
     useEffect(() => {
         getProjects().then((content) => {
@@ -124,10 +125,9 @@ const ProjectsGrid = () => {
             setRows(_rows);
             setProjects(content.projects);
             setUsernames(content.usernames);
-
-            // eslint-disable-next-line react-hooks/exhaustive-deps
         });
-    }, [reRender]);
+    }, []);
+
 
     return (
         <div className={classes.root}>
@@ -147,7 +147,7 @@ const ProjectsGrid = () => {
                     />
                 </div>
             </Paper>
-            <ProjectModal handleClose={handleClose} open={open} project={project} usernames={usernames} reRender={reRenderGrid} />
+            <ProjectModal handleClose={handleClose} open={open} project={project} usernames={usernames} socket={socket} />
         </div>
     );
 };

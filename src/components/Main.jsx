@@ -3,10 +3,10 @@ import React from "react";
 import Body from "./Body"
 import Header from "./Header";
 
-const Main = ({ user, theme, themePref, socket }) => {
+const Main = ({ user, theme, themePref, socket, verifyJWT }) => {
   return (
     <>
-      <Header user={user} theme={theme} themePref={themePref} />
+      <Header user={user} theme={theme} themePref={themePref} verifyJWT={verifyJWT} />
       <Body socket={socket} user={user} />
     </>
   );

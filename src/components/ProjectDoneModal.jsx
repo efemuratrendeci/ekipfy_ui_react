@@ -11,7 +11,7 @@ import Box from "@material-ui/core/Box";
 import DoneIcon from '@material-ui/icons/Done';
 import Typography from "@material-ui/core/Typography";
 
-const ProjectCloseModal = ({ open, handleClose, reRender, handleCloseProject, project_id }) => {
+const ProjectCloseModal = ({ open, handleClose, handleCloseProject, project_id }) => {
 
     const doneProjectRequest = async (closedReason) => {
         let token = localStorage.getItem("token");
@@ -43,7 +43,6 @@ const ProjectCloseModal = ({ open, handleClose, reRender, handleCloseProject, pr
 
     const handleDoneProject = (reason) => {
         doneProjectRequest(reason);
-        reRender();
         handleClose();
         handleCloseProject();
     };

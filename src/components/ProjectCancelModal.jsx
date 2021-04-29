@@ -10,7 +10,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 
-const ProjectCancelModal = ({ open, handleClose, reRender, handleCloseProject, project_id }) => {
+const ProjectCancelModal = ({ open, handleClose, handleCloseProject, project_id }) => {
 
     const cancelProjectRequest = async () => {
         let token = localStorage.getItem("token");
@@ -43,7 +43,6 @@ const ProjectCancelModal = ({ open, handleClose, reRender, handleCloseProject, p
 
     const handleCancelProject = () => {
         cancelProjectRequest();
-        reRender();
         handleClose();
         handleCloseProject();
     };
