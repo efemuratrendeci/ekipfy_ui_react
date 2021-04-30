@@ -1,15 +1,16 @@
 import Main from "./components/Main.jsx";
-import Login from "./components/Login.jsx";
+import Login from "./components/Auth/Login.jsx";
 import Loading from "./components/Loading.jsx";
 import { useState, useEffect, useMemo } from "react";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { io } from 'socket.io-client';
+import { sendRequest } from "./helpers/ekipfy_api";
 
 const socket = io(process.env.REACT_APP_API_URL);
 
 const App = () => {
-  const [user, setUser] = useState({});
+  const [content, setContent] = useState({});
   const [error, setError] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isJWTVerified, setIsJWTVerified] = useState(false);
@@ -17,33 +18,18 @@ const App = () => {
 
   const verifyJWT = async () => {
     try {
-      let token = localStorage.getItem("token");
+      let response = await sendRequest({
+        controller: '/auth/verify_jwt',
+        method: 'GET'
+      });
 
-      const options = {
-        method: "GET",
-        timeout: 1000,
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      }, url = `${process.env.REACT_APP_API_URL}/auth/verify_jwt`;
-
-      let response = await fetch(url, options);
-
-      if (response.status === 200) {
-
-        response = await response.json();
-
-        setUser({ ...response.content.user });
-        socket.emit('login', { username: response.content.user.username });
-        setIsLoggedIn(true);
-
-      } else {
-        setIsLoggedIn(false);
-      }
+      socket.emit('login', { username: response.user.username });
+      setContent(response);
+      setIsLoggedIn(true);
 
     } catch (error) {
-      setError(error.message);
-      console.log(error)
+      setError({ message: error.message });
+
     } finally {
       setIsJWTVerified(true);
     }
@@ -53,30 +39,20 @@ const App = () => {
     verifyJWT()
   }, [])
 
-  const _login = async (creadentials) => {
+  const login = async (creadentials) => {
     try {
-      let response = await fetch(`${process.env.REACT_APP_API_URL}/auth/connect`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(creadentials),
+      let response = await sendRequest({
+        controller: '/auth/connect',
+        method: 'POST',
+        body: creadentials
       });
 
-      let status = response.status;
+      localStorage.setItem("token", response.token);
 
-      response = await response.json();
+      socket.emit('login', { username: response.user.username });
+      setContent(response);
+      setIsLoggedIn(true);
 
-      if (status === 200) {
-        localStorage.setItem("token", response.content.token);
-
-        setIsLoggedIn({ isLoggedIn: true });
-        setUser({ ...response.content.user });
-
-        socket.emit('login', { username: response.content.user.username });
-      } else {
-        setError({ message: status !== 500 ? response.message : 'Server responded with 500. Make sure your backend stil on run' });
-      }
     } catch (error) {
       setError({ message: error.message });
     }
@@ -107,14 +83,14 @@ const App = () => {
         <CssBaseline />
         {isLoggedIn && isJWTVerified ?
           <Main
-            user={user}
+            user={content.user}
             theme={setTheme}
             themePref={prefersDarkMode}
             socket={socket}
             verifyJWT={verifyJWT} />
           : !isLoggedIn && isJWTVerified ?
             <Login
-              method={_login}
+              method={login}
               error={error} />
             : <Loading />}
       </ThemeProvider>
