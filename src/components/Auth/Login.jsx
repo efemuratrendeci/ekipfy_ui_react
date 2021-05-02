@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   CssBaseline,
   Container,
@@ -9,11 +9,10 @@ import {
   OutlinedInput,
   InputLabel,
   FormControl,
-  Snackbar,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
-import Alert from "@material-ui/lab/Alert";
+import SnackbarController from "../Message/SnackbarController"
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -27,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Login = ({ method, error }) => {
+const Login = ({ method, outerError }) => {
   const classes = useStyles();
 
   const [credentials, setCredentials] = useState({
@@ -35,7 +34,7 @@ const Login = ({ method, error }) => {
     password: "",
   });
   const [showPass, setShowPass] = useState(false);
-  const [_error, setError] = useState(error);
+  const [error] = useState(outerError ? outerError : '');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -47,16 +46,6 @@ const Login = ({ method, error }) => {
     setShowPass(!showPass);
   };
 
-  const handleDelete = () => {
-    setError({ message: undefined });
-  };
-
-  useEffect(() => {
-    if (error) {
-      setError(error);
-    }
-  }, [error]);
-
   return (
     <>
       <Container component="main" maxWidth="sm">
@@ -65,7 +54,7 @@ const Login = ({ method, error }) => {
           <img className="ekipfy-login" src="./ekipfy.png" alt="" />
           <form onSubmit={handleSubmit}>
             <TextField
-              error={_error.message?.length > 0 ? true : false}
+              error={error.length > 0 ? true : false}
               variant="outlined"
               margin="normal"
               required
@@ -83,7 +72,7 @@ const Login = ({ method, error }) => {
             <FormControl fullWidth variant="outlined">
               <InputLabel htmlFor="password">Şifre</InputLabel>
               <OutlinedInput
-                error={_error.message?.length > 0 ? true : false}
+                error={error.length > 0 ? true : false}
                 id="password"
                 type={showPass ? "text" : "password"}
                 autoComplete="new-password"
@@ -95,7 +84,7 @@ const Login = ({ method, error }) => {
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
-                      className={_error.message?.length > 0 ? "c-r" : ""}
+                      className={error.length > 0 ? "c-r" : ""}
                       aria-label="toggle password visibility"
                       onClick={handleClickShowPassword}
                       edge="end"
@@ -117,19 +106,7 @@ const Login = ({ method, error }) => {
               Giriş
             </Button>
           </form>
-          {_error.message ? (
-            <Snackbar
-              open={_error.message ? true : false}
-              autoHideDuration={6000}
-              onClose={handleDelete}
-            >
-              <Alert onClose={handleDelete} severity="error">
-                {_error.message}
-              </Alert>
-            </Snackbar>
-          ) : (
-            " "
-          )}
+          <SnackbarController outerOpen={error ? true : false} severity="error" message={error} duration={0} />
         </div>
       </Container>
     </>

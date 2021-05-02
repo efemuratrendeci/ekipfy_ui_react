@@ -11,7 +11,7 @@ const socket = io(process.env.REACT_APP_API_URL);
 
 const App = () => {
   const [content, setContent] = useState({});
-  const [error, setError] = useState({});
+  const [error, setError] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isJWTVerified, setIsJWTVerified] = useState(false);
   const [prefersDarkMode, setPrefersDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
@@ -28,7 +28,7 @@ const App = () => {
       setIsLoggedIn(true);
 
     } catch (error) {
-      setError({ message: error.message });
+      setError(error.message);
 
     } finally {
       setIsJWTVerified(true);
@@ -54,7 +54,7 @@ const App = () => {
       setIsLoggedIn(true);
 
     } catch (error) {
-      setError({ message: error.message });
+      setError(error.message);
     }
   };
 
@@ -91,7 +91,7 @@ const App = () => {
           : !isLoggedIn && isJWTVerified ?
             <Login
               method={login}
-              error={error} />
+              outerError={error} />
             : <Loading />}
       </ThemeProvider>
 

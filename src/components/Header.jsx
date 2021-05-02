@@ -4,6 +4,7 @@ import NavigationMenu from './NavigationMenu';
 import { useState } from "react";
 import Switch from '@material-ui/core/Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Typography from "@material-ui/core/Typography";
 
 
 const Header = ({ user, theme, themePref, verifyJWT }) => {
@@ -30,6 +31,9 @@ const Header = ({ user, theme, themePref, verifyJWT }) => {
                 ) : (
                     <img src="./ekipfy.png" className="ekipfy-brand" alt=""></img>
                 )}
+                <Typography variant="overline" style={{ fontSize: 16, padding: '0 1rem', borderLeft: '5px solid dodgerblue', borderRight: '5px solid mediumseagreen', borderRadius: 50 }} display="block" gutterBottom>
+                    {user.fullname.length === 0 ? user.username : user.fullname}
+                </Typography>
                 <div>
                     <FormControlLabel
                         control={
